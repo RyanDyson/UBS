@@ -12,6 +12,7 @@
     "evaluatex": "^2.2.0",
     "express": "^4.17.1",
     "latex-parser": "^0.6.2",
+    "jimp": "^1.6.0",
     "morgan-body": "^2.5.1",
     "node-fetch": "^2.6.7"
   }
