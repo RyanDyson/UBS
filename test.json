@@ -1,0 +1,25 @@
+{
+  "networks": [
+    {
+      "networkId": "network1",
+      "network": [
+        {
+          "spy1": "Karina",
+          "spy2": "Giselle"
+        },
+        {
+          "spy1": "Karina",
+          "spy2": "Winter"
+        },
+        {
+          "spy1": "Karina",
+          "spy2": "Ningning"
+        },
+        {
+          "spy1": "Giselle",
+          "spy2": "Winter"
+        }
+      ]
+    }
+  ]
+}

@@ -290,23 +290,16 @@ function findExtraChannels(network) {
 }
 
 app.post("/investigate", (req, res) => {
-  try {
-    const { networks } = req.body;
+  const { networks } = req.body;
 
-    const result = {
-      networks: networks.map((networkData) => ({
-        networkId: networkData.networkId,
-        extraChannels: findExtraChannels(networkData.network),
-      })),
-    };
+  const result = {
+    networks: networks.map((networkData) => ({
+      networkId: networkData.networkId,
+      extraChannels: findExtraChannels(networkData.network),
+    })),
+  };
 
-    res.json(result);
-  } catch (error) {
-    console.error("Investigation error:", error);
-    res
-      .status(500)
-      .json({ error: "Internal server error during investigation" });
-  }
+  res.json(result);
 });
 
 app.post("/blankety", (req, res) => {
