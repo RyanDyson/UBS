@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 5000;
 const app = express().use(express.json());
 morganBody(app, { noColors: process.env.NODE_ENV === "production" });
 
-app.use(express.json({ limit: "1000mb" }));
+app.use(express.json({ limit: "100000mb" }));
 
 /**
  * @param {Array} customer
