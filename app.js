@@ -289,7 +289,7 @@ app.post("/2048", (req, res) => {
   else if (isLose(grid)) endGame = "lose";
 
   // randomly replace any null into 2
-  add2s(grid);
+  // add2s(grid);
 
   res.json({
     nextGrid: grid,
