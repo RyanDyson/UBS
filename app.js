@@ -1,6 +1,7 @@
 const express = require("express");
 const morganBody = require("morgan-body");
 const path = require("path");
+const cors = require("cors");
 const PORT = process.env.PORT || 5000;
 
 const { robustImputation } = require("./blankety-blank.js");
@@ -10,7 +11,7 @@ const { generateOptimalSchedule } = require("./princess.js");
 const { findExtraChannels } = require("./bureau.js");
 
 const app = express();
-app.use(express.json({ limit: "100mb" }));
+app.use(express.json({ limit: "100mb" }), cors());
 morganBody(app, { noColors: process.env.NODE_ENV === "production" });
 
 app
@@ -144,15 +145,15 @@ app.get("/", (req, res) => {
 // Shifts cell grid[row][col] up by one tile
 function shift(row, col, grid, direction) {
   if (direction == "UP") {
-    grid[row-1][col] = grid[row][col]
+    grid[row - 1][col] = grid[row][col];
   } else if (direction == "LEFT") {
-    grid[row][col-1] = grid[row][col]
-  } else if (direction == "RIGHT"){
-    grid[row][col+1] = grid[row][col]
+    grid[row][col - 1] = grid[row][col];
+  } else if (direction == "RIGHT") {
+    grid[row][col + 1] = grid[row][col];
   } else {
-    grid[row+1][col] = grid[row][col]
+    grid[row + 1][col] = grid[row][col];
   }
-  grid[row][col] = null
+  grid[row][col] = null;
 }
 
 function LoopUp(grid) {
@@ -160,38 +161,38 @@ function LoopUp(grid) {
   for (let row = 1; row < 4; row++) {
     for (let col = 0; col < 4; col++) {
       // Move the col up
-      let curRow = row
-      while (curRow != 0 && grid[curRow-1][col] == null) {
-        shift(curRow--, col, grid, "UP")
+      let curRow = row;
+      while (curRow != 0 && grid[curRow - 1][col] == null) {
+        shift(curRow--, col, grid, "UP");
       }
 
       // If blocked by another tile above, shift and double
-      if (curRow != 0 && grid[curRow-1][col] == grid[curRow][col]) {
-        shift(curRow--, col, grid, "UP")
-        grid[curRow][col] *= 2
+      if (curRow != 0 && grid[curRow - 1][col] == grid[curRow][col]) {
+        shift(curRow--, col, grid, "UP");
+        grid[curRow][col] *= 2;
       }
     }
   }
-  return grid
+  return grid;
 }
 function LoopDown(grid) {
   // Loop from 3rd Row upwards
   for (let row = 2; row >= 0; row--) {
     for (let col = 0; col < 4; col++) {
       // Move the col down
-      let curRow = row
-      while (curRow != 3 && grid[curRow+1][col] == null) {
-        shift(curRow++, col, grid, "DOWN")
+      let curRow = row;
+      while (curRow != 3 && grid[curRow + 1][col] == null) {
+        shift(curRow++, col, grid, "DOWN");
       }
 
       // If blocked by another tile below, shift and double
-      if (curRow != 3 && grid[curRow+1][col] == grid[curRow][col]) {
-        shift(curRow++, col, grid, "DOWN")
-        grid[curRow][col] *= 2
+      if (curRow != 3 && grid[curRow + 1][col] == grid[curRow][col]) {
+        shift(curRow++, col, grid, "DOWN");
+        grid[curRow][col] *= 2;
       }
     }
   }
-  return grid
+  return grid;
 }
 
 function LoopRight(grid) {
@@ -199,19 +200,19 @@ function LoopRight(grid) {
   for (let col = 2; col >= 0; col--) {
     for (let row = 0; row < 4; row++) {
       // Move the row to the right
-      let curCol = col
-      while (curCol != 3 && grid[row][curCol+1] == null) {
-        shift(row, curCol++, grid, "RIGHT")
+      let curCol = col;
+      while (curCol != 3 && grid[row][curCol + 1] == null) {
+        shift(row, curCol++, grid, "RIGHT");
       }
 
       // If blocked by another tile above, shift and double
-      if (curCol != 3 && grid[row][curCol+1] == grid[row][curCol]) {
-        shift(row, curCol++, grid, "RIGHT")
-        grid[row][curCol] *= 2
+      if (curCol != 3 && grid[row][curCol + 1] == grid[row][curCol]) {
+        shift(row, curCol++, grid, "RIGHT");
+        grid[row][curCol] *= 2;
       }
     }
   }
-  return grid
+  return grid;
 }
 
 function LoopLeft(grid) {
@@ -219,26 +220,26 @@ function LoopLeft(grid) {
   for (let col = 1; col < 4; col++) {
     for (let row = 0; row < 4; row++) {
       // Move the row to the left
-      let curCol = col
-      while (curCol != 0 && grid[row][curCol-1] == null) {
-        shift(row, curCol--, grid, "LEFT")
+      let curCol = col;
+      while (curCol != 0 && grid[row][curCol - 1] == null) {
+        shift(row, curCol--, grid, "LEFT");
       }
 
       // If blocked by another tile above, shift and double
-      if (curCol != 0 && grid[row][curCol-1] == grid[row][curCol]) {
-        shift(row, curCol--, grid, "LEFT")
-        grid[row][curCol] *= 2
+      if (curCol != 0 && grid[row][curCol - 1] == grid[row][curCol]) {
+        shift(row, curCol--, grid, "LEFT");
+        grid[row][curCol] *= 2;
       }
     }
   }
-  return grid
+  return grid;
 }
 
 function add2s(grid) {
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] == null && Math.random() > 0.7) {
-        grid[row][col] = 2
+        grid[row][col] = 2;
       }
     }
   }
@@ -248,60 +249,59 @@ function isWin(grid) {
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 4; col++) {
       if (grid[row][col] == 2048) {
-        return true
+        return true;
       }
     }
   }
 
-  return false
+  return false;
 }
 
 function isSameGrid(grid1, grid2) {
   for (let row = 0; row < 4; row++) {
     for (let col = 0; col < 4; col++) {
       if (grid1[row][col] != grid2[row][col]) {
-        return false
+        return false;
       }
     }
   }
-  return true
+  return true;
 }
 
 function isLose(grid) {
-  if (!isSameGrid(grid, LoopUp(structuredClone(grid)))) return false
-  if (!isSameGrid(grid, LoopDown(structuredClone(grid)))) return false
-  if (!isSameGrid(grid, LoopRight(structuredClone(grid)))) return false
-  if (!isSameGrid(grid, LoopLeft(structuredClone(grid)))) return false
-  return true
+  if (!isSameGrid(grid, LoopUp(structuredClone(grid)))) return false;
+  if (!isSameGrid(grid, LoopDown(structuredClone(grid)))) return false;
+  if (!isSameGrid(grid, LoopRight(structuredClone(grid)))) return false;
+  if (!isSameGrid(grid, LoopLeft(structuredClone(grid)))) return false;
+  return true;
 }
-
 
 app.post("/2048", (req, res) => {
   const {grid, mergeDirection} = req.body
   let endGame = null
 
-  if (mergeDirection == "UP") LoopUp(grid)
-  if (mergeDirection == "LEFT") LoopLeft(grid)
-  if (mergeDirection == "RIGHT") LoopRight(grid)
-  if (mergeDirection == "DOWN") LoopDown(grid)
+  if (mergeDirection == "UP") LoopUp(grid);
+  if (mergeDirection == "LEFT") LoopLeft(grid);
+  if (mergeDirection == "RIGHT") LoopRight(grid);
+  if (mergeDirection == "DOWN") LoopDown(grid);
 
-  if (isWin(grid)) endGame = "win"
-  else if (isLose(grid)) endGame = "lose"
-
-  
+  if (isWin(grid)) endGame = "win";
+  else if (isLose(grid)) endGame = "lose";
 
   // randomly replace any null into 2
-  add2s(grid)
+  add2s(grid);
 
   res.json({
     nextGrid: grid,
-    endGame
-  })
-})
+    endGame,
+  });
+});
 //princess-diaries
 app.post("/princess-diaries", (req, res) => {
   const result = generateOptimalSchedule(req.body);
   res.json(result);
 });
+
+//host
 
 module.exports = app;
