@@ -116,7 +116,7 @@ app.get("/trivia", (req, res) => {
   });
 });
 
-app.post("/mst-calcuation", async (req, res) => {
+app.post("/mst-calculation", async (req, res) => {
   try {
     const { image: image1 } = req.body[0];
     const { image: image2 } = req.body[1];
