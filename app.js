@@ -353,6 +353,94 @@ app.post("/trading-formula", (req, res) => {
   }
 });
 
+app.post("/The-Ink-Archive", (req, res) => {
+  const input = req.body; // array of challenges with { ratios, goods }
+
+  const responses = input.map(({ ratios, goods }) => {
+    const n = goods.length;
+
+    // Build edges and a lookup map for direct rate access
+    const edges = [];
+    const rateMap = {};
+    ratios.forEach(([u, v, rate]) => {
+      edges.push({ u, v, rate });
+      if (!rateMap[u]) rateMap[u] = {};
+      rateMap[u][v] = rate;
+    });
+
+    // Convert to -log scale for Bellman-Ford
+    const logEdges = edges.map((e) => ({
+      u: e.u,
+      v: e.v,
+      w: -Math.log(e.rate),
+    }));
+
+    function findArbitrage() {
+      for (let start = 0; start < n; start++) {
+        let dist = new Array(n).fill(Infinity);
+        let parent = new Array(n).fill(-1);
+        dist[start] = 0;
+
+        // Relaxation phase
+        for (let k = 0; k < n - 1; k++) {
+          for (const { u, v, w } of logEdges) {
+            if (dist[u] + w < dist[v]) {
+              dist[v] = dist[u] + w;
+              parent[v] = u;
+            }
+          }
+        }
+
+        // Check for negative cycle
+        for (const { u, v, w } of logEdges) {
+          if (dist[u] + w < dist[v]) {
+            // Found cycle: backtrack
+            let x = v;
+            for (let i = 0; i < n; i++) x = parent[x];
+
+            const cycleNodes = [];
+            const seen = new Set();
+            let cur = x;
+            while (!seen.has(cur)) {
+              seen.add(cur);
+              cur = parent[cur];
+            }
+
+            const cycle = [];
+            const startNode = cur;
+            cycle.push(startNode);
+            cur = parent[startNode];
+            while (cur !== startNode) {
+              cycle.push(cur);
+              cur = parent[cur];
+            }
+            cycle.reverse();
+            cycle.push(startNode);
+
+            // Calculate product using rateMap
+            let product = 1;
+            for (let i = 0; i < cycle.length - 1; i++) {
+              const from = cycle[i],
+                to = cycle[i + 1];
+              const rate =
+                rateMap[from] && rateMap[from][to] ? rateMap[from][to] : 0;
+              product *= rate;
+            }
+
+            const gain = (product - 1) * 100;
+            return { path: cycle.map((i) => goods[i]), gain };
+          }
+        }
+      }
+      return { path: [], gain: 0 };
+    }
+
+    return findArbitrage();
+  });
+
+  res.json(responses);
+});
+
 //host
 
 module.exports = app;
