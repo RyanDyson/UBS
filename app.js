@@ -590,5 +590,13 @@ app.post("/sailing-club", (req, res) => {
 
   res.json(testCases.map(x => solve(x)))
 })
+app.post("/sailing-club/submission", (req, res) => {
+  /**
+   * @type {{testCases: Schedules[]}}}
+   */
+  const {testCases} = req.body
+
+  res.json(testCases.map(x => solve(x)))
+})
 
 module.exports = app;
