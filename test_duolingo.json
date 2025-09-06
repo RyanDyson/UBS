@@ -1,0 +1,26 @@
+[
+  {
+    "part": "ONE",
+    "challenge": 1000,
+    "challengeInput": {
+      "unsortedList": ["MCMXCIX", "C", "XL", "XLIX", "X", "2000"]
+    }
+  },
+  {
+    "part": "TWO",
+    "challenge": 2000,
+    "challengeInput": {
+      "unsortedList": [
+        "MCMXCIX",
+        "one hundred twenty",
+        "四十五",
+        "XLIX",
+        "五萬四千三百二十一",
+        "siebenundachtzig",
+        "dreihundertelf",
+        "one thousand one hundred",
+        "100000"
+      ]
+    }
+  }
+]
