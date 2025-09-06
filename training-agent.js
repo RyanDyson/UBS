@@ -1,4 +1,4 @@
-export function findBestConcert(customer, concerts, priority) {
+function findBestConcert(customer, concerts, priority) {
   function dist([x0, y0], [x1, y1]) {
     return Math.sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2);
   }
@@ -23,3 +23,7 @@ export function findBestConcert(customer, concerts, priority) {
   const max = values.reduce((prev, cur) => (prev[1] > cur[1] ? prev : cur));
   return max[0];
 }
+
+module.exports = {
+  findBestConcert,
+};

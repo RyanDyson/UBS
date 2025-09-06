@@ -1,6 +1,9 @@
-export async function toAdjMatrix(image) {
+const { Jimp } = require("jimp");
+const { cv } = require("./opencv.js");
+
+async function toAdjMatrix(image) {
   try {
-    const jimpSrc = await jimp.read(image);
+    const jimpSrc = await Jimp.read(image);
     const src = cv.matFromImageData(jimpSrc.bitmap);
 
     let gray;
@@ -142,3 +145,7 @@ function detectNodes(grayscale) {
 
   return nodes;
 }
+
+module.exports = {
+  toAdjMatrix,
+};

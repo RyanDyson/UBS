@@ -1,4 +1,4 @@
-export function linearInterpolate(arr) {
+function linearInterpolate(arr) {
   const result = [...arr];
 
   let firstValid = result.findIndex((x) => x !== null);
@@ -41,7 +41,7 @@ export function linearInterpolate(arr) {
   return result;
 }
 
-export function movingAverage(arr, window = 5) {
+function movingAverage(arr, window = 5) {
   const result = [...arr];
 
   for (let i = 0; i < result.length; i++) {
@@ -68,7 +68,7 @@ export function movingAverage(arr, window = 5) {
   return result;
 }
 
-export function polynomialFit(arr, degree = 2) {
+function polynomialFit(arr, degree = 2) {
   const result = [...arr];
 
   const validPoints = [];
@@ -106,7 +106,7 @@ export function polynomialFit(arr, degree = 2) {
   return result;
 }
 
-export function robustImputation(arr) {
+function robustImputation(arr) {
   let result = [...arr];
 
   result = linearInterpolate(result);
@@ -143,7 +143,7 @@ export function robustImputation(arr) {
   return smoothed;
 }
 
-export function detectTrend(arr) {
+function detectTrend(arr) {
   const validPoints = [];
   for (let i = 0; i < arr.length; i++) {
     if (arr[i] !== null && !isNaN(arr[i])) {
@@ -161,3 +161,11 @@ export function detectTrend(arr) {
 
   return (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
 }
+
+module.exports = {
+  linearInterpolate,
+  movingAverage,
+  polynomialFit,
+  robustImputation,
+  detectTrend,
+};
