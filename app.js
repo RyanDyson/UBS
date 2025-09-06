@@ -40,7 +40,14 @@ function findBestConcert(customer, concerts, priority) {
 }
 
 // Payload routes - always return file content
-const payloads = ["crackme", "salary", "stack", "shellcode", "hashclash-mini", "hashclash"];
+const payloads = [
+  "crackme",
+  "salary",
+  "stack",
+  "shellcode",
+  "hashclash-mini",
+  "hashclash",
+];
 for (const payload of payloads) {
   const filename = "payload_" + payload;
   app.get("/" + filename, (req, res) => {
@@ -285,10 +292,6 @@ function findExtraChannels(network) {
 app.post("/investigate", (req, res) => {
   try {
     const { networks } = req.body;
-
-    if (!networks || !Array.isArray(networks)) {
-      return res.status(400).json({ error: "Expected array of networks" });
-    }
 
     const result = {
       networks: networks.map((networkData) => ({
