@@ -1,5 +1,6 @@
 const express = require('express');
 const morganBody = require('morgan-body');
+const path = require('path')
 const PORT = process.env.PORT || 5000;
 
 const app = express().use(express.json());
@@ -36,6 +37,15 @@ function findBestConcert(customer, concerts, priority) {
   const max = values.reduce((prev, cur) => prev[1] > cur[1] ? prev : cur) 
   return max[0]
 }
+
+const payloads = ['crackme', 'salary', 'stack']
+for (const payload of payloads) {
+  const filename = "payload_"+payload
+  app.get("/" + filename, (req, res) => {
+    res.sendFile(filename, {root: path.join(__dirname)})
+  })
+}
+
 
 app.post("/ticketing-agent", (req, res) => {
   const {customers, concerts, priority} = req.body;
