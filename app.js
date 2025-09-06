@@ -584,6 +584,6 @@ function generateOptimalSchedule(input) {
 
 app.post("/princess-diaries", (req, res) => {
   const result = generateOptimalSchedule(req.body);
-  res.json( {result} );
+  res.json( result );
   })
 
