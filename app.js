@@ -1,6 +1,7 @@
 const express = require("express");
 const morganBody = require("morgan-body");
 const path = require("path");
+const cors = require("cors");
 const PORT = process.env.PORT || 5000;
 
 const { robustImputation } = require("./blankety-blank.js");
@@ -10,7 +11,7 @@ const { generateOptimalSchedule } = require("./princess.js");
 const { findExtraChannels } = require("./bureau.js");
 
 const app = express();
-app.use(express.json({ limit: "100mb" }));
+app.use(express.json({ limit: "100mb" }), cors());
 morganBody(app, { noColors: process.env.NODE_ENV === "production" });
 
 app
