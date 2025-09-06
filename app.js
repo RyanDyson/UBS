@@ -9,9 +9,10 @@ const { toAdjMatrix, calcMST } = require("./mts.js");
 const { findBestConcert } = require("./training-agent.js");
 const { generateOptimalSchedule } = require("./princess.js");
 const { findExtraChannels } = require("./bureau.js");
+const { sortDuolingo } = require("./duolingo-sort.js");
 
 const app = express();
-app.use(express.json({ limit: "100mb" }), cors());
+app.use(express.json({ limit: "100mb" }));
 morganBody(app, { noColors: process.env.NODE_ENV === "production" });
 
 app
@@ -278,7 +279,7 @@ function isLose(grid) {
 
 app.post("/2048", (req, res) => {
   const { grid, mergeDirection } = req.body;
-  let endGame = null;
+  let endGame = "";
 
   if (mergeDirection == "UP") LoopUp(grid);
   if (mergeDirection == "LEFT") LoopLeft(grid);
@@ -302,6 +303,31 @@ app.post("/princess-diaries", (req, res) => {
   res.json(result);
 });
 
-// 2048 try again
+// duolingo-sort
+app.post("/duolingo-sort", (req, res) => {
+  try {
+    const { part, challenge, challengeInput } = req.body;
+    const { unsortedList } = challengeInput;
+
+    if (!part || !unsortedList || !Array.isArray(unsortedList)) {
+      return res.status(400).json({
+        error: "Invalid input format",
+      });
+    }
+
+    const sortedList = sortDuolingo(part, unsortedList);
+
+    res.json({
+      sortedList,
+    });
+  } catch (error) {
+    console.error("Duolingo sort error:", error);
+    res.status(500).json({
+      error: "Internal server error during sorting",
+    });
+  }
+});
+
+//host
 
 module.exports = app;
