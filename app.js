@@ -1,11 +1,24 @@
+import { robustImputation } from "./blankety-blank.js";
+import { toAdjMatrix } from "./mts.js";
+import { findBestConcert } from "./training-agent.js";
+
 const express = require("express");
 const morganBody = require("morgan-body");
 const path = require("path");
+const jimp = require("jimp");
+const cv = require("./opencv.js");
 const PORT = process.env.PORT || 5000;
 
 const app = express();
 app.use(express.json({ limit: "100mb" }));
 morganBody(app, { noColors: process.env.NODE_ENV === "production" });
+
+app
+  .post("/square", (req, res) => {
+    const output = parseInt(req.body.input) ** 2;
+    res.json(output);
+  })
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 /**
  * @param {Array} customer
@@ -13,31 +26,6 @@ morganBody(app, { noColors: process.env.NODE_ENV === "production" });
  * @returns {string}
  * push comment
  */
-function findBestConcert(customer, concerts, priority) {
-  function dist([x0, y0], [x1, y1]) {
-    return Math.sqrt((x0 - x1) ** 2 + (y0 - y1) ** 2);
-  }
-
-  function distToLatency(dist) {
-    if (dist <= 1) return 30;
-    if (dist <= 4) return 20;
-    if (dist <= 9) return 10;
-    return 0;
-  }
-
-  // Get the distances
-  /** @type {[string, number][]} */
-  const values = concerts.map(({ name, booking_center_location }) => {
-    const pointsFromLatency = distToLatency(
-      dist(customer.location, booking_center_location)
-    );
-    const pointsFromCC = priority[customer.credit_card] == name ? 50 : 0;
-    return [name, pointsFromLatency + pointsFromCC];
-  });
-
-  const max = values.reduce((prev, cur) => (prev[1] > cur[1] ? prev : cur));
-  return max[0];
-}
 
 // Payload routes - always return file content
 const payloads = [
@@ -346,13 +334,15 @@ app.get("/trivia", (req, res) => {
   });
 });
 
-app
-  .post("/square", (req, res) => {
-    const output = parseInt(req.body.input) ** 2;
-    res.json(output);
-  })
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+app.post("/mst-calcuation", (req, res) => {
+  const { image: image1 } = req.body[0];
+  const { image: image2 } = req.body[1];
 
+  const matrix1 = toAdjMatrix(image1);
+  const matrix2 = toAdjMatrix(image2);
+});
+
+//vercel testing
 app.get("/", (req, res) => {
   res.json({ message: "Hello World" });
 });
