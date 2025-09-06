@@ -290,7 +290,7 @@ function findExtraChannels(network) {
 }
 
 app.post("/investigate", (req, res) => {
-  const { networks } = req.body;
+  const networks = req.body;
 
   const result = {
     networks: networks.map((networkData) => ({
