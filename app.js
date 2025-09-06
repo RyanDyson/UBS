@@ -5,8 +5,7 @@ const PORT = process.env.PORT || 5000;
 const app = express().use(express.json());
 morganBody(app, { noColors: process.env.NODE_ENV === "production" });
 
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ limit: "10mb", extended: true }));
+app.use(express.json({ limit: "1000mb" }));
 
 /**
  * @param {Array} customer
@@ -47,6 +46,12 @@ app.post("/ticketing-agent", (req, res) => {
       customers.map((x) => [x.name, findBestConcert(x, concerts, priority)])
     )
   );
+});
+
+app.get("/trivia", (req, res) => {
+  res.json({
+    answers: [4, 1, 2, 2, 3, 4, 4, 5, 4],
+  });
 });
 
 app
