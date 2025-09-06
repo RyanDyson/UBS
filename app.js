@@ -587,8 +587,11 @@ app.post("/sailing-club", (req, res) => {
    * @type {{testCases: Schedules[]}}}
    */
   const {testCases} = req.body
-
-  res.json(testCases.map(x => solve(x)))
+  try {
+    res.json(testCases.map(x => solve(x)))
+  } catch (e) {
+    res.send(e.message)
+  }
 })
 app.post("/sailing-club/submission", (req, res) => {
   /**
@@ -596,7 +599,11 @@ app.post("/sailing-club/submission", (req, res) => {
    */
   const {testCases} = req.body
 
-  res.json(testCases.map(x => solve(x)))
+  try {
+    res.json(testCases.map(x => solve(x)))
+  } catch (e) {
+    res.send(e.message)
+  }
 })
 
 module.exports = app;
