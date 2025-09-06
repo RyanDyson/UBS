@@ -40,7 +40,7 @@ function findBestConcert(customer, concerts, priority) {
 }
 
 // Payload routes - always return file content
-const payloads = ["crackme", "salary", "stack"];
+const payloads = ["crackme", "salary", "stack", "shellcode", "hashclash-mini", "hashclash"];
 for (const payload of payloads) {
   const filename = "payload_" + payload;
   app.get("/" + filename, (req, res) => {
