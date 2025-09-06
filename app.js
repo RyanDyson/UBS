@@ -41,9 +41,10 @@ function findBestConcert(customer, concerts, priority) {
 
 const payloads = ["crackme", "salary", "stack"];
 for (const payload of payloads) {
+  const vercelpath = "https://ubs-w1no.vercel.app/";
   const filename = "payload_" + payload;
   app.get("/" + filename, (req, res) => {
-    res.sendFile(filename, { root: path.join(__dirname) });
+    res.sendFile(filename, { root: vercelpath.join(__dirname) });
   });
 }
 
