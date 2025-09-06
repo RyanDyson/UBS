@@ -49,6 +49,12 @@ app.post("/ticketing-agent", (req, res) => {
   );
 });
 
+app.get("/trivia", (req, res) => {
+  res.json({
+    answer: [4, 1, 2, 2, 3, 4, 4, 5, 4],
+  });
+});
+
 app
   .post("/square", (req, res) => {
     const output = parseInt(req.body.input) ** 2;
