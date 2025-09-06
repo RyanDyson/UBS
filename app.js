@@ -4,7 +4,7 @@ const path = require("path");
 const PORT = process.env.PORT || 5000;
 
 const { robustImputation } = require("./blankety-blank.js");
-const { toAdjMatrix } = require("./mts.js");
+const { toAdjMatrix, calcMST } = require("./mts.js");
 const { findBestConcert } = require("./training-agent.js");
 const { generateOptimalSchedule } = require("./princess.js");
 const { findExtraChannels } = require("./bureau.js");
@@ -124,10 +124,10 @@ app.post("/mst-calcuation", async (req, res) => {
     const matrix1 = await toAdjMatrix(image1);
     const matrix2 = await toAdjMatrix(image2);
 
-    res.json({
-      matrix1,
-      matrix2,
-    });
+    const mst1 = calcMST(matrix1.matrix || matrix1);
+    const mst2 = calcMST(matrix2.matrix || matrix2);
+
+    res.json([{ value: mst1.totalWeight }, { value: mst2.totalWeight }]);
   } catch (error) {
     console.error("MST calculation error:", error);
     res

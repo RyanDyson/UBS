@@ -146,6 +146,68 @@ function detectNodes(grayscale) {
   return nodes;
 }
 
+function calcMST(adjMatrix) {
+  const n = adjMatrix.length;
+  if (n === 0) return { edges: [], totalWeight: 0 };
+
+  // Prim's algorithm implementation
+  const visited = new Array(n).fill(false);
+  const key = new Array(n).fill(Infinity);
+  const parent = new Array(n).fill(-1);
+  const mstEdges = [];
+
+  // Start from vertex 0
+  key[0] = 0;
+
+  for (let count = 0; count < n - 1; count++) {
+    // Find minimum key vertex not yet in MST
+    let minKey = Infinity;
+    let minIndex = -1;
+
+    for (let v = 0; v < n; v++) {
+      if (!visited[v] && key[v] < minKey) {
+        minKey = key[v];
+        minIndex = v;
+      }
+    }
+
+    if (minIndex === -1) break; // No more connected vertices
+
+    visited[minIndex] = true;
+
+    // Add edge to MST (except for the first vertex)
+    if (parent[minIndex] !== -1) {
+      mstEdges.push({
+        from: parent[minIndex],
+        to: minIndex,
+        weight: adjMatrix[parent[minIndex]][minIndex],
+      });
+    }
+
+    // Update key values of adjacent vertices
+    for (let v = 0; v < n; v++) {
+      if (
+        !visited[v] &&
+        adjMatrix[minIndex][v] !== 0 &&
+        adjMatrix[minIndex][v] < key[v]
+      ) {
+        key[v] = adjMatrix[minIndex][v];
+        parent[v] = minIndex;
+      }
+    }
+  }
+
+  // Calculate total weight
+  const totalWeight = mstEdges.reduce((sum, edge) => sum + edge.weight, 0);
+
+  return {
+    edges: mstEdges,
+    totalWeight: totalWeight,
+    numVertices: n,
+  };
+}
+
 module.exports = {
   toAdjMatrix,
+  calcMST,
 };
