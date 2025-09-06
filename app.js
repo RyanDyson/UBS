@@ -441,6 +441,58 @@ app.post("/The-Ink-Archive", (req, res) => {
   res.json(responses);
 });
 
+app.post("/the-mages-gambit", (req, res) => {
+  try {
+    const scenarios = req.body;
+
+    const results = scenarios.map(({ intel, reserve, fronts, stamina }) => {
+      let currentMana = reserve;
+      let currentStamina = stamina;
+      let totalTime = 0;
+      let lastAttackedFront = null;
+      let lastActionWasAttack = false;
+
+      for (let i = 0; i < intel.length; i++) {
+        const [front, manaCost] = intel[i];
+
+        // Check if we need cooldown before this attack
+        if (currentMana < manaCost || currentStamina === 0) {
+          // Need cooldown
+          totalTime += 10;
+          currentMana = reserve;
+          currentStamina = stamina;
+          lastActionWasAttack = false;
+        }
+
+        // Perform the attack
+        currentMana -= manaCost;
+        currentStamina--;
+
+        // Check if this is consecutive attack on same front
+        if (lastActionWasAttack && lastAttackedFront === front) {
+          // No extra time needed for consecutive attack on same front
+        } else {
+          // Need 10 minutes for new target or first attack
+          totalTime += 10;
+        }
+
+        lastAttackedFront = front;
+        lastActionWasAttack = true;
+      }
+
+      // Final cooldown to be ready for expedition
+      totalTime += 10;
+
+      return { time: totalTime };
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error("Mage's Gambit error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 //host
 
 /** @typedef {{id: string, input: [number, number][]}} Schedules */
