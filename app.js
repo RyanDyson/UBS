@@ -39,12 +39,39 @@ function findBestConcert(customer, concerts, priority) {
   return max[0];
 }
 
+// Payload routes - works for both local and Vercel
 const payloads = ["crackme", "salary", "stack"];
 for (const payload of payloads) {
-  const vercelpath = "https://ubs-w1no.vercel.app/";
   const filename = "payload_" + payload;
   app.get("/" + filename, (req, res) => {
-    res.sendFile(filename, { root: vercelpath });
+    try {
+      // For Vercel, files are served from the root directory
+      const filePath =
+        process.env.VERCEL_URL || process.env.VERCEL
+          ? path.join(process.cwd(), filename)
+          : path.join(__dirname, filename);
+
+      // Set appropriate headers for different file types
+      if (payload === "stack") {
+        res.setHeader("Content-Type", "application/octet-stream");
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename="${filename}"`
+        );
+      } else {
+        res.setHeader("Content-Type", "text/plain");
+      }
+
+      res.sendFile(filePath, (err) => {
+        if (err) {
+          console.error(`Error serving ${filename}:`, err);
+          res.status(404).json({ error: "File not found" });
+        }
+      });
+    } catch (error) {
+      console.error(`Error serving ${filename}:`, error);
+      res.status(500).json({ error: "Server error" });
+    }
   });
 }
 
@@ -268,5 +295,3 @@ app.get("/", (req, res) => {
 });
 
 module.exports = app;
-
-//gnarly
