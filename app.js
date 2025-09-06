@@ -278,7 +278,7 @@ function isLose(grid) {
 
 app.post("/2048", (req, res) => {
   const {grid, mergeDirection} = req.body
-  let endGame = ''
+  let endGame = null
 
   if (mergeDirection == "UP") LoopUp(grid)
   if (mergeDirection == "LEFT") LoopLeft(grid)
