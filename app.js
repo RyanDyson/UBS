@@ -443,4 +443,100 @@ app.post("/The-Ink-Archive", (req, res) => {
 
 //host
 
+/** @typedef {{id: string, input: [number, number][]}} Schedules */
+
+class Slot {
+  /** @type {number} */
+  start
+  /** @type {number} */
+  end
+
+
+  constructor([start, end]) {
+    this.start = start
+    this.end = end
+  }
+
+  /** @param {Slot} o */
+  conflictsWith(o) {
+    // Two slots don't conflict if o.start > this.end OR o.end < this.start
+    return !(o.start > this.end || o.end < this.start)
+  }
+
+  /** @param {Slot} o */
+  join(o) {
+    return new Slot(
+      [Math.min(this.start, o.start), Math.max(this.end, o.end)],
+    )
+  }
+}
+
+function getMinBoats(input) {
+  const boats = Array(5000).fill(0)
+  for (const [start, end] of  input) {
+    for (let i = start; i <= end; i++) 
+      boats[i]++;
+  }
+  return Math.max(...boats)
+}
+
+/** @param {Schedules} schedules  */
+function solve({id, input}) {
+  /** @type {Slot[]} */
+  let mergedSlots = []
+  for (const times of input) {
+    let slot = new Slot(times)
+
+    // Insert the slot if is empty
+    if (mergedSlots.length == 0) { 
+      mergedSlots.push(slot)
+      continue
+    }
+
+    // If slot is larger than the largest slot, we enter directly at the end
+    if (mergedSlots.at(-1).end < slot.start) {
+      mergedSlots.push(slot)
+      continue
+    }
+
+    // Otherwise, fold and collapse them
+    mergedSlots = mergedSlots.reduce((acc, val) => {
+      // Join all slots together
+      if (slot != null && slot.conflictsWith(val)) {
+        slot = slot.join(val)
+        return acc
+      }
+
+      // if slot is before val and is not conflict
+      if (slot != null && slot.end < val.start) {
+        tmpSlot = slot
+        slot = null
+        return [...acc, tmpSlot, val]
+      }
+
+      // Otherwise, just append val to acc
+      return [...acc, val]
+    }, [])
+
+    // If the slot isn't null now, then add to end
+    if (slot != null) {mergedSlots.push(slot)}
+  }
+
+  return {
+    id,
+    sortedMergedSlots: mergedSlots.map(({start, end}) => {return [start, end]}),
+    minBoatsNeeded: getMinBoats(input)
+  }
+
+}
+
+app.post("/sailing-club", (req, res) => {
+  /**
+   * @type {{testCases: Schedules[]}}}
+   */
+  const {testCases} = req.body
+
+  res.json(testCases.map(x => solve(x)))
+})
+
 module.exports = app;
