@@ -50,7 +50,7 @@ app.post("/ticketing-agent", (req, res) => {
 
 app.get("/trivia", (req, res) => {
   res.json({
-    answer: [4, 1, 2, 2, 3, 4, 4, 5, 4],
+    answers: [4, 1, 2, 2, 3, 4, 4, 5, 4],
   });
 });
 
