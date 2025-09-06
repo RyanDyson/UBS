@@ -10,6 +10,7 @@ const { findBestConcert } = require("./training-agent.js");
 const { generateOptimalSchedule } = require("./princess.js");
 const { findExtraChannels } = require("./bureau.js");
 const { sortDuolingo } = require("./duolingo-sort.js");
+const { tradingFormula } = require("./trading-formula.js");
 
 const app = express();
 app.use(express.json({ limit: "100mb" }));
@@ -325,6 +326,30 @@ app.post("/duolingo-sort", (req, res) => {
     res.status(500).json({
       error: "Internal server error during sorting",
     });
+  }
+});
+
+app.post("/trading-formula", (req, res) => {
+  try {
+    const requests = req.body;
+
+    if (!Array.isArray(requests)) {
+      return res
+        .status(400)
+        .json({ error: "Expected array of formula requests" });
+    }
+
+    const results = requests.map((request) => {
+      const { name, formula, variables, type } = request;
+      return tradingFormula(name, formula, variables, type);
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error("Trading formula error:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error during formula evaluation" });
   }
 });
 
