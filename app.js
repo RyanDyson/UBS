@@ -49,12 +49,6 @@ for (const payload of payloads) {
         ? path.join(process.cwd(), filename)
         : path.join(__dirname, filename);
 
-    if (payload === "stack") {
-      res.setHeader("Content-Type", "application/octet-stream");
-    } else {
-      res.setHeader("Content-Type", "text/plain");
-    }
-
     res.sendFile(filePath);
   });
 }
